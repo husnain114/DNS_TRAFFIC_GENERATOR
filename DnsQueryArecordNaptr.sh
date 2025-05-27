@@ -9,6 +9,10 @@ usage() {
     exit 1
 }
 
+cleanup() {
+    ls -1t *_DNS_out_file.txt 2>/dev/null | tail -n +3 | xargs -r rm --
+}
+
 write_csv_header() {
     if [ "$QUERY_TYPE" == "A" ]; then
         echo "domain,query_number,answer_a,datetime" > "$OUT_FILE"
@@ -77,7 +81,8 @@ main() {
         [ -z "$DOMAIN" ] && continue
         query_domain "$DOMAIN" "$SRC_IP" "$DNS_SERVER" "$COUNT"
     done < "$DOMAIN_FILE"
-
+    
+    cleanup
     wait
 }
 
